@@ -8,13 +8,23 @@ from api.data.repositories.books_repository import BookRepository
 
 # /books
 # Get all books
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @renderer_classes((JSONRenderer,))
-def get_all(request):
+def get_all_or_create(request):
     books_repository =  BookRepository()
-    books = books_repository.get_all()
-    serializer = BookSerializer(books, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        books = books_repository.get_all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        serializer = BookSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data_to_return = {'message':'created successfully'}
+            return Response(data=data_to_return, status=status.HTTP_201_CREATED)
+        else:
+            data_to_return = {'message':'failed to save the book'}
+            return Response(data=data_to_return, status=status.HTTP_400_BAD_REQUEST)
 
 
 # /books/<int:id>

@@ -4,9 +4,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from api.views import books_view, home_view
 #from .views import BooksView, BookDetailView
 
-urlpatterns = {
-    path('books/', books_view.get_all, name="list_books"),
+urlpatterns = [
+    path('books/', books_view.get_all_or_create, name="list_or_create_book"),
     path('books/<int:id>', books_view.get_by_id, name="book_detail"),
-    path('', home_view.home, name="home"),
+    path('', home_view.home, name="home")
     #path('books/<int:id>', BookDetailView.as_view(), name="book_details"),
-}
+]
